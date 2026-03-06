@@ -52,6 +52,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
             new Filter { DisplayName = "Maps", Query = "ClassName.Equals(\"Map\")", Include = true },
             new Filter { DisplayName = "Divination Cards", Query = "ClassName.Equals(\"DivinationCard\")", Include = true },
             new Filter { DisplayName = "Gear", Query = "HasTag(\"armour\") || HasTag(\"weapon\") || HasTag(\"quiver\") || HasTag(\"belt\") || HasTag(\"amulet\") || HasTag(\"ring\")", Exclude = true },
+            new Filter { DisplayName = "High Value Uniques", Query = "Name.Contains(\"Mageblood\") ||\nName.Contains(\"Nimis\") ||\nName.Contains(\"Headhunter\") ||\nName.Contains(\"Voidforge\") ||\nName.Contains(\"Squire\") ||\nName.Contains(\"Kalandra\")", Include = true },
             new Filter { DisplayName = "Jewels", Query = "HasTag(\"jewel\") || HasTag(\"abyss_jewel\")", Exclude = true }
         };
 
