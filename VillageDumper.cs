@@ -159,8 +159,6 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
                             }
                             ImGui.EndPopup();
                         } else if (_editFilterIndex.HasValue && _editFilterIndex == index) {
-                            DebugWindow.LogMsg($"Popup {index} is closed!");
-                            DebugWindow.LogMsg($"Popup {index} has closed when it should have been open!");
                             _editFilterIndex = null;
                             _editFilterQuery = string.Empty;
                             _newFilterDisplayName = string.Empty;
@@ -526,8 +524,6 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
 
     private List<ServerInventory.InventSlotItem> GetHighlightedItems(IList<ServerInventory.InventSlotItem> rewards) {
         try {
-            DebugWindow.LogMsg("Checking server items: " + rewards.Count);
-
             var filteredRewards = new List<ServerInventory.InventSlotItem>();
 
             if (!string.IsNullOrEmpty(_customFilter)) {
@@ -549,8 +545,6 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
                     }
                 }
             }
-
-            DebugWindow.LogMsg("Rewards after filtering: " + filteredRewards.Count);
             return filteredRewards;
         } catch {
             return [];
