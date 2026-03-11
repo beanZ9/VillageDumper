@@ -47,22 +47,44 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
     public override bool Initialise() {
         Graphics.InitImage(Path.Combine(DirectoryFullName, "images\\pick.png").Replace('\\', '/'), false);
 
-        Settings.SavedFilters ??= new() {
-            new Filter { DisplayName = "Everything", Query = "True", Include = true, CanBeExcluded = false, CanBeEdited = false },
-            new Filter { DisplayName = "Currency", Query = "ClassName.Contains(\"Currency\")", Include = true },
-            new Filter { DisplayName = "Fragments", Query = "ClassName.Equals(\"MapFragment\")", Include = true },
-            new Filter { DisplayName = "Maps", Query = "ClassName.Equals(\"Map\")", Include = true },
-            new Filter { DisplayName = "Divination Cards", Query = "ClassName.Equals(\"DivinationCard\")", Include = true },
-            new Filter { DisplayName = "Gear", Query = "HasTag(\"armour\") || HasTag(\"weapon\") || HasTag(\"quiver\") || HasTag(\"belt\") || HasTag(\"amulet\") || HasTag(\"ring\")", Exclude = true },
-            new Filter { DisplayName = "High Value Uniques", Query = "Name.Contains(\"Mageblood\") ||\nName.Contains(\"Nimis\") ||\nName.Contains(\"Headhunter\") ||\nName.Contains(\"Voidforge\") ||\nName.Contains(\"Squire\") ||\nName.Contains(\"Kalandra\")", Include = true },
-            new Filter { DisplayName = "Jewels", Query = "HasTag(\"jewel\") || HasTag(\"abyss_jewel\")", Exclude = true }
-        };
+        if (Settings.SavedFilters == null || Settings.SavedFilters.Count == 0) {
+            Settings.SavedFilters = CreateDefaultFilters();
+        }
 
         _cachedQueries = new Dictionary<string, QueryOrException>();
 
         _rewardWindow = InGameState.IngameUi.VillageRewardWindow;
         _initialized = true;
         return true;
+    }
+
+    private List<Filter> CreateDefaultFilters() {
+        return new() {
+            new Filter {
+                DisplayName = "Everything", Query = "True", Include = true, CanBeExcluded = false, CanBeEdited = false
+            },
+            new Filter { DisplayName = "Currency", Query = "ClassName.Contains(\"Currency\")", Include = true },
+            new Filter { DisplayName = "Fragments", Query = "ClassName.Equals(\"MapFragment\")", Include = true },
+            new Filter { DisplayName = "Maps", Query = "ClassName.Equals(\"Map\")", Include = true },
+            new Filter {
+                DisplayName = "Divination Cards", Query = "ClassName.Equals(\"DivinationCard\")", Include = true
+            },
+            new Filter {
+                DisplayName = "Gear",
+                Query =
+                    "HasTag(\"armour\") || HasTag(\"weapon\") || HasTag(\"quiver\") || HasTag(\"belt\") || HasTag(\"amulet\") || HasTag(\"ring\")",
+                Exclude = true
+            },
+            new Filter {
+                DisplayName = "High Value Uniques",
+                Query =
+                    "Name.Contains(\"Mageblood\") ||\nName.Contains(\"Nimis\") ||\nName.Contains(\"Headhunter\") ||\nName.Contains(\"Voidforge\") ||\nName.Contains(\"Squire\") ||\nName.Contains(\"Kalandra\")",
+                Include = true
+            },
+            new Filter {
+                DisplayName = "Jewels", Query = "HasTag(\"jewel\") || HasTag(\"abyss_jewel\")", Exclude = true
+            }
+        };
     }
 
     public override void AreaChange(AreaInstance area) {
