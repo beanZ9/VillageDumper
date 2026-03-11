@@ -65,7 +65,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
             },
             new Filter { DisplayName = "Currency", Query = "ClassName.Contains(\"Currency\")", Include = true },
             new Filter { DisplayName = "Fragments", Query = "ClassName.Equals(\"MapFragment\")", Include = true },
-            new Filter { DisplayName = "Maps", Query = "ClassName.Equals(\"Map\")", Include = true },
+            new Filter { DisplayName = "Maps", Query = "ClassName.Equals(\"Map\") || ClassName.Equals(\"MapKey\")", Include = true },
             new Filter {
                 DisplayName = "Divination Cards", Query = "ClassName.Equals(\"DivinationCard\")", Include = true
             },
@@ -259,14 +259,38 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
                     CheckboxWithAction("Auto start on next", () => Settings.KeepDumping, value => Settings.KeepDumping = value);
                     if (ImGui.IsItemHovered()) ImGui.SetTooltip("(Careful) Automatically start dumping on the next set of rewards.\nKeeps dumping items until inventory full or aborted.");
                 }
+
+                ImGui.Separator();
+                if (ImGui.Button("Reset Filters To Default")) {
+                    ImGui.OpenPopup("reset_filters_confirmation");
+                }
+                if (ImGui.IsItemHovered()) {
+                    ImGui.SetTooltip("Replace all current filters with the defaults.");
+                }
+                if (ImGui.BeginPopupContextItem("reset_filters_confirmation")) {
+                    ImGui.TextUnformatted("This will replace all current filters with the defaults.");
+                    ImGui.TextUnformatted("This action cannot be undone.");
+
+                    if (ImGui.Button("Cancel")) {
+                        ImGui.CloseCurrentPopup();
+                    }
+
+                    ImGui.SameLine();
+                    if (ImGui.Button("Reset to default")) {
+                        Settings.SavedFilters = CreateDefaultFilters();
+                        _cachedQueries?.Clear();
+                        ImGui.CloseCurrentPopup();
+                    }
+
+                    ImGui.EndPopup();
+                }
                 ImGui.TreePop();
             }
 
             ImGui.End();
         }
     }
-
-
+    
     public override void Render() {
         if (!_initialized) Initialise();
         if (_currentOperation != null) {
@@ -386,7 +410,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
             }
         }
     }
-
+    
     private async SyncTask<bool> MoveItemsCommonPreamble() {
         while (Control.MouseButtons == MouseButtons.Left || MoveCancellationRequested) {
             if (MoveCancellationRequested) {
