@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExileCore;
+using ExileCore.PoEMemory;
 using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.Elements;
 using ExileCore.PoEMemory.Elements.InventoryElements;
@@ -27,6 +28,7 @@ namespace VillageDumper;
 public class VillageDumper : BaseSettingsPlugin<Settings> {
     private bool _initialized;
     private VillageRewardWindow _rewardWindow;
+    private Element _mapRunnerWindow;
     private SyncTask<bool> _currentOperation;
     private string _customFilter = string.Empty;
     private string _previousQuery = string.Empty;
@@ -66,6 +68,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
     public override void AreaChange(AreaInstance area) {
         _mouseStateForRect.Clear();
         _rewardWindow = InGameState.IngameUi.VillageRewardWindow;
+        _mapRunnerWindow = InGameState.IngameUi[125];
     }
 
     void CheckboxWithAction(string label, Func<bool> getter, Action<bool> setter) {
@@ -253,9 +256,8 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
             return;
 
         // Render on mapping device map queue 
-        var mapRunnerUi = InGameState.IngameUi[127];
-        if (mapRunnerUi.IsVisible && (Settings.HighlightGoodRunnerMaps || Settings.HighlightBadRunnerMaps)) {
-            var mapQueue = mapRunnerUi[4];
+        if (_mapRunnerWindow.IsVisible && (Settings.HighlightGoodRunnerMaps || Settings.HighlightBadRunnerMaps)) {
+            var mapQueue = _mapRunnerWindow[4];
 
             if (mapQueue is { IsValid: true, ChildCount: > 2 and <= 14 }) {
                 for (int i = 2; i < mapQueue.ChildCount; i++) {
@@ -466,7 +468,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
 
             if (Settings.AutoOpenNext) {
                 if (MoveCancellationRequested) return false;
-                var queue = InGameState.IngameUi[127][4];
+                var queue = _mapRunnerWindow[4];
                 if (queue.IsVisible && queue.ChildCount > 2) {
                     var firstMap = queue.Children.Where(c => c.Entity.IsValid && c.Entity.Type == EntityType.Item).MinBy(c => c.GetClientRectCache.Left);
                     var firstMapRect = firstMap.GetClientRectCache.Center.ToVector2Num();
