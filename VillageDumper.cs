@@ -302,7 +302,7 @@ public class VillageDumper : BaseSettingsPlugin<Settings> {
             return;
 
         // Render on mapping device map queue 
-        _mapRunnerWindow = InGameState.IngameUi[125];
+        _mapRunnerWindow = InGameState.IngameUi[132];
         if (_mapRunnerWindow?.IsVisible == true && (Settings.HighlightGoodRunnerMaps || Settings.HighlightBadRunnerMaps)) {
             var mapQueue = _mapRunnerWindow[4];
 
